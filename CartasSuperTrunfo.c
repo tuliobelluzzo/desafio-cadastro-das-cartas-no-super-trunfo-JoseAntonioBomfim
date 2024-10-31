@@ -1,90 +1,80 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <ctype.h> // Para verificar se é letra
+#include <locale.h>
 
 // Variáveis globais para armazenar os dados
-char estado;
-char codigoCarta[3];
-char nomeCidade[30];
-double populacao;
-double areaKm;
-double pib;
-int pontosTuristicos;
-double densidadeDemografica;
-double pibPercapita;
+typedef struct {
+    char estado[3];
+    char codigoCarta[3];
+    char nomeCidade[30];
+    double populacao;
+    double areaKm;
+    double pib;
+    int pontosTuristicos;
+    double densidadeDemografica;
+    double pibPercapita;
+} dadosCidade;
 
-// Função para entrada de dados
-void entradaDados() {
-    // Solicita a letra inicial do estado e o código da carta
-    printf("Insira a Letra Inicial do Estado e o Código: ");
-    scanf(" %c", &estado);
-    scanf("%2s", codigoCarta);
-
-    // Solicita o nome da cidade
-    printf("Insira Nome da Cidade: ");
-    getchar();  // Consome o '\n' que pode ter ficado no buffer
-    fgets(nomeCidade, sizeof(nomeCidade), stdin);  // Lê o nome da cidade com espaços
-
-    // Remove o '\n' adicionado pelo fgets
-    nomeCidade[strcspn(nomeCidade, "\n")] = 0;
-
-    // Solicita a população
-    printf("Insira População: ");
-    scanf("%lf", &populacao);
-
-    // Solicita a área em Km²
-    printf("Insira Área em Km²: ");
-    scanf("%lf", &areaKm);
-
-    // Solicita o PIB
-    printf("Insira o PIB em mil: ");
-    scanf("%lf", &pib);
-
-    // Solicita a quantidade de pontos turísticos
-    printf("Insira Quantidade de Pontos Turísticos: ");
-    scanf("%d", &pontosTuristicos);
-
-}
+dadosCidade cidade[2];
 
 // Função para cálculo da densidade demográfica
 double calculaDensidadeDemografica(double populacao, double areaKm) {
-    
     return populacao / areaKm;
-    
 }
 
-// Função para cálculo do PIB percapita
+// Função para cálculo do PIB per capita
 double calculoPibPercapita(double pib, double populacao) {
-    
     return pib / populacao;
-    
-}
-
-// Função para exibir dados
-void exibirDados(char estado, char codigoCarta[], char nomeCidade[], double populacao, 
-double areaKm, double pib, int pontosTuristicos, double densidadeDemografica, double pibPercapita) {
-    printf("\nEstado: %c\n", estado);
-    printf("Código da carta: %c%s\n", estado, codigoCarta);
-    printf("Nome da cidade: %s\n", nomeCidade);
-    printf("População: %.2lf Habitantes\n", populacao);
-    printf("Área em Km²: %.2lf Km²\n", areaKm);
-    printf("PIB R$: %.2lf Bilhões de Reais\n", pib);
-    printf("Número de Pontos Turísticos: %d\n", pontosTuristicos);
-    printf("Densidade Demográfica: %.2lf Habitantes/Km²\n", densidadeDemografica);
-    printf("PIB Percapita: %.2lf PIB/Habitantes\n", pibPercapita);
 }
 
 int main() {
-    // Entrada de dados
-    entradaDados();
+    setlocale(LC_ALL, "portuguese");
 
-   // Calcula densidade demográfica e PIB percapita
-    double densidadeDemografica = calculaDensidadeDemografica(populacao, areaKm);
-    double pibPercapita = calculoPibPercapita(pib, populacao);
+    // Entrada dos dados
+    for (int i = 0; i < 2; i++) {
+        printf("\nCódigo do Estado: ");
+        scanf("%2s", cidade[i].codigoCarta);
+        
+        printf("Estado: ");
+        scanf("%2s", cidade[i].estado);
+        
+        printf("Cidade: ");
+        scanf("%29s", cidade[i].nomeCidade); // %29s para limitar o tamanho
+        
+        printf("Insira População: ");
+        scanf("%lf", &cidade[i].populacao);
 
+        printf("Insira Área em Km²: ");
+        scanf("%lf", &cidade[i].areaKm);
 
-    // Exibe os dados
-    exibirDados(estado, codigoCarta, nomeCidade, populacao, areaKm, pib, pontosTuristicos, densidadeDemografica, pibPercapita);
+        printf("Insira o PIB em mil: ");
+        scanf("%lf", &cidade[i].pib);
+
+        printf("Insira Quantidade de Pontos Turísticos: ");
+        scanf("%d", &cidade[i].pontosTuristicos);
+    }
+
+    // Cálculo da densidade demográfica e PIB per capita
+    for (int i = 0; i < 2; i++) {
+        cidade[i].densidadeDemografica = calculaDensidadeDemografica(cidade[i].populacao, cidade[i].areaKm);
+        cidade[i].pibPercapita = calculoPibPercapita(cidade[i].pib, cidade[i].populacao);
+    }
+
+    // Exibir os dados com densidade demográfica e PIB per capita
+    for (int i = 0; i < 2; i++) {
+        printf("\n==================================");
+        printf("\nCódigo Carta: %s", cidade[i].codigoCarta);
+        printf("\nEstado: %s", cidade[i].estado);
+        printf("\nCidade: %s", cidade[i].nomeCidade);
+        printf("\nPopulação: %.2lf", cidade[i].populacao);
+        printf("\nÁrea em Km²: %.2lf", cidade[i].areaKm);
+        printf("\nPIB em mil: %.2lf", cidade[i].pib);
+        printf("\nQuantidade de Pontos Turísticos: %d", cidade[i].pontosTuristicos);
+        printf("\nDensidade Demográfica: %.2lf", cidade[i].densidadeDemografica);
+        printf("\nPIB per Capita: %.2lf", cidade[i].pibPercapita);
+        printf("\n==================================\n");
+    }
 
     return 0;
 }
